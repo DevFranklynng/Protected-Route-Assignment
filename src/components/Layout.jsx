@@ -1,23 +1,29 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
+
 import Navbar from './Navbar'
 
 function Layout() {
     const [token, setToken] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    const checkLoginStatus = () => {
-        const savedToken = localStorage.getItem("token")
-        setToken(savedToken)
-    }
+    const location = useLocation()
 
     useEffect(() => {
+        const savedToken = localStorage.getItem("token")
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        checkLoginStatus()
+        setToken(savedToken)
+        setLoading(false)
     }, [])
 
+    if (loading) {
+        return null
+    }
+
+    
     if (!token) {
-        return <Navigate to="/login" replace />
+        return <Navigate to="/login" replace state={{ from: location}}/>
     }
 
     return (
